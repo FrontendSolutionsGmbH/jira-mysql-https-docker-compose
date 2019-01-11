@@ -4,11 +4,12 @@ docker-compose for jira including letsencrypt auto renewal https
 
 # Description 
 
-With this project you can easily run jira-software inside one docker-compose including https. 
+With this project you can easily run jira-software inside one docker-compose including https
 
 # Prerequisite
 
 * Docker needs to be installed
+* Docker-Compose needs to be installed
 
 # Usage
 
@@ -21,14 +22,17 @@ export JIRA_MYSQL_USER=jiradbuser
 export JIRA_MYSQL_PASSWORD=12345
 export JIRA_HOST=jira.example.com
 export JIRA_EMAIL=admin@jira.example.com
-
 ```
 
 ## Update dbconfig.xml
 
 Replace 
-* JIRA_MYSQL_USER and
-* JIRA_MYSQL_PASSWORD 
+* JIRA_MYSQL_USER 
+
+and
+
+* JIRA_MYSQL_PASSWORD
+
 with the correct username and password like in the env variables
 
 ## Variant A: Start it without importing data from another system
@@ -42,8 +46,8 @@ with the correct username and password like in the env variables
 
 or if you want to try it on your local machine
 
-* localhost:80 - nginx
-* localhost:8080 - jira
+* http://localhost:80 - nginx
+* http://localhost:8080 - jira
 
 ## Variant B: Start it with importing data from another jira instance
 
@@ -59,12 +63,12 @@ Something like ...
 
 ### import 
 
-to import data, first start mysql and import data there:
+start the mysql container only and import data there:
 
 * docker-compose up mysql
 * docker cp ./jira-backup-sql.sql mysql:/
 * docker exec -it mysql bash
-* mysql -u root -p jiradb < /jira-backup-sql.sql
+* mysql -u root -p jiradb < /jira-backup-sql.sql. # replace jiradb with the name of the jira databasename
 
 then you start jira and import data there
 
