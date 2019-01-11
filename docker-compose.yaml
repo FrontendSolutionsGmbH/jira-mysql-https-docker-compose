@@ -1,0 +1,91 @@
+version: '3'
+# help for backup and importing 
+# export 
+# mysql: mysqldump -u jiradbuser -p --opt --single-transaction jiradb > "/home/server/jira-backup-sql.sql" 
+# tar -zcf /home/server/jira-back-var-application-data.tar.gz /var/atlassian/application-data/jira/data &>/dev/null
+
+# import 
+# docker-compose up mysql
+# docker cp ./jira-backup-sql.sql mysql:/
+# docker exec -it mysql bash
+# mysql -u root -p jiradb < /jira-backup-sql.sql
+# docker-compose up jira
+# docker cp jira-backup-data.zip jira:/
+# docker exec -it jira bash
+# unzip /jira-backup-data.zip -d /var/atlassian/jira/
+# install add-ons "Tempo"
+# configure look and feel again
+
+services:
+  jira:
+    depends_on:
+      - mysql
+    container_name: jira
+    restart: always
+    image: cptactionhank/atlassian-jira-software:7.13.0
+    environment:
+      - VIRTUAL_HOST=${JIRA_HOST}
+      - LETSENCRYPT_HOST=${JIRA_HOST}
+      - LETSENCRYPT_EMAIL=${JIRA_EMAIL}
+    ports:
+      - '8080:8080'
+    volumes:
+      - jira-data:/var/atlassian/jira  # JIRA_HOME
+      - ./dbconfig.xml:/var/atlassian/jira/dbconfig.xml
+    networks:
+      jira-network:
+
+  mysql:
+    container_name: mysql
+    restart: always
+    image: mysql:5
+    environment:
+      - NETWORK_ACCESS=internal
+    environment:
+      - MYSQL_ROOT_PASSWORD="${JIRA_MYSQL_ROOT_PASSWORD}"
+      - MYSQL_DATABASE="${JIRA_MYSQL_DATABASE}"          # this database will be created on image startup
+      - MYSQL_USER="${JIRA_MYSQL_USER}"                # this user will be granted superuser permissions on MYSQL_DATABASE
+      - MYSQL_PASSWORD="${JIRA_MYSQL_PASSWORD}"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      jira-network:
+
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    labels:
+      - "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - nginx-vhost.d:/etc/nginx/vhost.d
+      - nginx-vhost.d:/usr/share/nginx/html
+      - nginx-certs:/etc/nginx/certs:ro
+    networks:
+      - jira-network
+    restart: always  
+
+  letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - nginx-certs:/etc/nginx/certs:rw
+      - nginx-vhost.d:/etc/nginx/vhost.d
+      - nginx-vhost.d:/usr/share/nginx/html
+    networks:
+      - jira-network
+    restart: always  
+
+
+networks:
+  jira-network:
+    driver: bridge
+
+volumes:
+  jira-data:
+  mysql-data:
+  nginx-vhost.d:
+  nginx-share.html:
+  nginx-certs:
