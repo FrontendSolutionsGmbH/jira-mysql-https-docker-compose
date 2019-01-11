@@ -1,20 +1,4 @@
 version: '3'
-# help for backup and importing 
-# export 
-# mysql: mysqldump -u jiradbuser -p --opt --single-transaction jiradb > "/home/server/jira-backup-sql.sql" 
-# tar -zcf /home/server/jira-back-var-application-data.tar.gz /var/atlassian/application-data/jira/data &>/dev/null
-
-# import 
-# docker-compose up mysql
-# docker cp ./jira-backup-sql.sql mysql:/
-# docker exec -it mysql bash
-# mysql -u root -p jiradb < /jira-backup-sql.sql
-# docker-compose up jira
-# docker cp jira-backup-data.zip jira:/
-# docker exec -it jira bash
-# unzip /jira-backup-data.zip -d /var/atlassian/jira/
-# install add-ons "Tempo"
-# configure look and feel again
 
 services:
   jira:
@@ -42,10 +26,10 @@ services:
     environment:
       - NETWORK_ACCESS=internal
     environment:
-      - MYSQL_ROOT_PASSWORD="${JIRA_MYSQL_ROOT_PASSWORD}"
-      - MYSQL_DATABASE="${JIRA_MYSQL_DATABASE}"          # this database will be created on image startup
-      - MYSQL_USER="${JIRA_MYSQL_USER}"                # this user will be granted superuser permissions on MYSQL_DATABASE
-      - MYSQL_PASSWORD="${JIRA_MYSQL_PASSWORD}"
+      - MYSQL_ROOT_PASSWORD=${JIRA_MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${JIRA_MYSQL_DATABASE}          # this database will be created on image startup
+      - MYSQL_USER=${JIRA_MYSQL_USER}               # this user will be granted superuser permissions on MYSQL_DATABASE
+      - MYSQL_PASSWORD=${JIRA_MYSQL_PASSWORD}
     volumes:
       - mysql-data:/var/lib/mysql
     networks:

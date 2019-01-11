@@ -15,12 +15,12 @@ With this project you can easily run jira-software inside one docker-compose inc
 ## Set env variables
 
 ```
-export JIRA_MYSQL_ROOT_PASSWORD=__ROOT_PASSWORD__  # e.g. supersecret
+export JIRA_MYSQL_ROOT_PASSWORD=supersecret
 export JIRA_MYSQL_DATABASE=jiradb
 export JIRA_MYSQL_USER=jiradbuser
-export JIRA_MYSQL_PASSWORD=__JIRAUSER_PASSWORD__ # e.g. 12345
-export JIRA_HOST=__YOUR_HOSTNAME__     # e.g. jira.example.com
-export JIRA_EMAIL=__EMAIL___       # e.g. admin@jira.example.com
+export JIRA_MYSQL_PASSWORD=12345
+export JIRA_HOST=jira.example.com
+export JIRA_EMAIL=admin@jira.example.com
 
 ```
 
@@ -31,9 +31,52 @@ Replace
 * JIRA_MYSQL_PASSWORD 
 with the correct username and password like in the env variables
 
-## Start it
+## Variant A: Start it without importing data from another system
 
 * docker-compose up
+
+## Open it and configure
+
+* http://jira.example.com
+* https://jira.example.com
+
+or if you want to try it on your local machine
+
+* localhost:80 - nginx
+* localhost:8080 - jira
+
+## Variant B: Start it with importing data from another jira instance
+
+### export 
+
+
+login to your current jira and backup the mysql data and the jira data
+
+Something like ...
+
+* mysql: mysqldump -u jiradbuser -p --opt --single-transaction jiradb > "/home/server/jira-backup-sql.sql" 
+* data: tar -zcf /home/server/jira-back-var-application-data.tar.gz /var/atlassian/application-data/jira/data &>/dev/null
+
+### import 
+
+to import data, first start mysql and import data there:
+
+* docker-compose up mysql
+* docker cp ./jira-backup-sql.sql mysql:/
+* docker exec -it mysql bash
+* mysql -u root -p jiradb < /jira-backup-sql.sql
+
+then you start jira and import data there
+
+* docker-compose up jira
+* docker cp jira-backup-data.zip jira:/
+* docker exec -it jira bash
+* unzip /jira-backup-data.zip -d /var/atlassian/jira/
+
+then you need to reconfigure some settings like look and feel and plugins as they were not exported (the data for the plugins were stored in the mysql export before so they are not lost)
+
+* install add-ons "Tempo"
+* configure look and feel again
 
 # Contact us
 
