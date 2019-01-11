@@ -1,15 +1,17 @@
 # jira-docker
 
-docker-compose for jira including letsencrypt auto renewal https 
+docker-compose for jira including mysql db + https with letsencrypt-auto-renewal 
 
 # Description 
 
-With this project you can easily run jira-software inside one docker-compose including https
+With this project you can easily run jira-software inside one docker-compose including https and a mysql database
 
-It is based on the docker image atlassian-jira-software:7.13.0 from cptactionhank. 
-* Note: If you want another version or to use jira and not jira-software, just change it inside the docker-compose.yaml
+It is based on the docker image atlassian-jira-software:7.13.0 from cptactionhank and mysql:5
 
 [https://hub.docker.com/r/cptactionhank/atlassian-jira/](https://hub.docker.com/r/cptactionhank/atlassian-jira/)
+
+* Note: If you want to use another version of jira or to use jira and not jira-software, just change it inside the docker-compose.yaml
+
 
 # Prerequisite
 
