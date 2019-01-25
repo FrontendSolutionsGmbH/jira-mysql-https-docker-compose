@@ -14,8 +14,6 @@ It is based on the docker image atlassian-jira-software:7.13.0 from cptactionhan
 
 [https://hub.docker.com/r/mysql/mysql-server](https://hub.docker.com/r/mysql/mysql-server)
 
-* Note: If you want to use another version of jira or to use jira and not jira-software, just change it inside the docker-compose.yaml
-
 # Prerequisite
 
 * Docker needs to be installed
@@ -23,74 +21,55 @@ It is based on the docker image atlassian-jira-software:7.13.0 from cptactionhan
 
 # Usage
 
-## Set env variables
+1. Set env variables
 
-```
-export JIRA_MYSQL_ROOT_PASSWORD=supersecret
-export JIRA_MYSQL_DATABASE=jiradb
-export JIRA_MYSQL_USER=jiradbuser
-export JIRA_MYSQL_PASSWORD=12345
-export JIRA_HOST=jira.example.com
-export JIRA_EMAIL=admin@jira.example.com
-```
+    ```
+    export JIRA_MYSQL_ROOT_PASSWORD=supersecret
+    export JIRA_MYSQL_DATABASE=jiradb
+    export JIRA_MYSQL_USER=jiradbuser
+    export JIRA_MYSQL_PASSWORD=12345
+    export JIRA_HOST=jira.example.com
+    export JIRA_EMAIL=admin@jira.example.com
+    ```
 
-## Update dbconfig.xml
+2. Change dbconfig.xml
 
-Replace 
-* JIRA_MYSQL_USER 
+    Replace JIRA_MYSQL_USER and JIRA_MYSQL_PASSWORD with the correct username and password (same as env variables)
 
-and
+3. Variant A: Start it without importing data from another system
 
-* JIRA_MYSQL_PASSWORD
+    docker-compose up
 
-with the correct username and password like in the env variables
+3. Variant B: Start it with importing data from another jira instance
 
-## Variant A: Start it without importing data from another system
+    * export data from your old jira instance
+    * login to your current jira and backup the mysql data and the jira data
 
-* docker-compose up
+	Something like ...
 
-## Open it and configure
+	* mysql: mysqldump -u jiradbuser -p --opt --single-transaction jiradb > "/home/server/jira-backup-sql.sql" 
+	* data: tar -zcf /home/server/jira-back-var-application-data.tar.gz /var/atlassian/application-data/jira/data &>/dev/null
 
-* http://jira.example.com
-* https://jira.example.com
+    * import 
 
-or if you want to try it on your local machine
+	    start the mysql container only and import data there:
 
-* http://localhost:80 - nginx
-* http://localhost:8080 - jira
-
-## Variant B: Start it with importing data from another jira instance
-
-### export 
-
-
-login to your current jira and backup the mysql data and the jira data
-
-Something like ...
-
-* mysql: mysqldump -u jiradbuser -p --opt --single-transaction jiradb > "/home/server/jira-backup-sql.sql" 
-* data: tar -zcf /home/server/jira-back-var-application-data.tar.gz /var/atlassian/application-data/jira/data &>/dev/null
-
-### import 
-
-start the mysql container only and import data there:
-
-* docker-compose up mysql
-* docker cp ./jira-backup-sql.sql mysql:/
-* docker exec -it mysql bash
-* mysql -u root -p jiradb < /jira-backup-sql.sql. # replace jiradb with the name of the jira databasename
-
-then you start jira and import data there
-
-* docker-compose up jira
-* docker cp jira-backup-data.zip jira:/
-* docker exec -it jira bash
-* unzip /jira-backup-data.zip -d /var/atlassian/jira/
-
-then you need to reconfigure some settings like look and feel and plugins as they were not exported (the data for the plugins were stored in the mysql export before so they are not lost)
-
-* install add-ons "Tempo"
-* configure look and feel again
+        * docker-compose up mysql
+        * docker cp ./jira-backup-sql.sql mysql:/
+        * docker exec -it mysql bash
+        * mysql -u root -p jiradb < /jira-backup-sql.sql. # replace jiradb with the name of the jira databasename
+    
+        then you start jira and import data there
+    
+        * docker-compose up jira
+        * docker cp jira-backup-data.zip jira:/
+        * docker exec -it jira bash
+        * unzip /jira-backup-data.zip -d /var/atlassian/jira/
+    
+        then you need to reconfigure some settings like look and feel and plugins as they were not exported (the data for the plugins were stored in the mysql export before so they are not lost)
+    
+        * install add-ons "Tempo"
+        * configure look and feel again
 
 # Contact us
 
