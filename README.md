@@ -1,6 +1,6 @@
-# jira-docker
+# jira-mysql-https-docker-compose
 
-docker-compose for jira including mysql db + https with letsencrypt-auto-renewal 
+docker-compose for jira + mysql + https + letsencrypt-auto-renewal 
 
 # Description 
 
