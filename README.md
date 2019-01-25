@@ -43,12 +43,10 @@ It is based on the docker image atlassian-jira-software:7.13.0 from cptactionhan
 3. Variant B: Start it with importing data from another jira instance
 
     * export data from your old jira instance
-    * login to your current jira and backup the mysql data and the jira data
-
-	Something like ...
-
-	* mysql: mysqldump -u jiradbuser -p --opt --single-transaction jiradb > "/home/server/jira-backup-sql.sql" 
-	* data: tar -zcf /home/server/jira-back-var-application-data.tar.gz /var/atlassian/application-data/jira/data &>/dev/null
+        Something like ...
+    
+        * mysql: mysqldump -u jiradbuser -p --opt --single-transaction jiradb > "/home/server/jira-backup-sql.sql" 
+        * data: tar -zcf /home/server/jira-back-var-application-data.tar.gz /var/atlassian/application-data/jira/data &>/dev/null
 
     * import 
 
