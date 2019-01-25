@@ -6,14 +6,13 @@ docker-compose for jira + mysql + https + letsencrypt-auto-renewal
 
 With this project you can easily run jira-software inside one docker-compose including https and a mysql database
 
-It is based on the docker image atlassian-jira-software:7.13.0 from cptactionhank jwilder/nginx-proxy and mysql:5
+It is based on the docker image atlassian-jira-software:7.13.0 from cptactionhank jwilder/nginx-proxy and mysql:5  which can be changed easily by editing the [docker-compose.yaml](docker-compose.yaml)
 
 [https://hub.docker.com/r/cptactionhank/atlassian-jira/](https://hub.docker.com/r/cptactionhank/atlassian-jira/)
 
 [https://hub.docker.com/r/jwilder/nginx-proxy/](https://hub.docker.com/r/jwilder/nginx-proxy/)
 
-[https://hub.docker.com/r/mysql/mysql-server]
-(https://hub.docker.com/r/mysql/mysql-server)
+[https://hub.docker.com/r/mysql/mysql-server](https://hub.docker.com/r/mysql/mysql-server)
 
 * Note: If you want to use another version of jira or to use jira and not jira-software, just change it inside the docker-compose.yaml
 
